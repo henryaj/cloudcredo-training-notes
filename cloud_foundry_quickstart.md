@@ -83,6 +83,35 @@ cf target -o <orgName> -s <spaceName>
 ### Inspect log files
 * `cf files <app_name> app/<path_to_log_file>` outputs the whole file(!)
 
+## UAA management
+
+### Provisioning a UAA server
+* Install Java SDK and follow the quick start and CF deployment guide at https://github.com/cloudfoundry/uaa
+* Install the `cf-uaac` gem 
+* Target the UAA server: `uaac target https://uaa.10.244.0.34.xip.io --skip-ssl-validation`
+* Get the access token from the server: `uaac token client get admin -s <admin_secret>` – the admin secret is set in `bosh-lite/manifests/cf-manifest.yml`; `admin-secret` by default
+
+### Managing users
+* get a list of all usernames: `uaac users -a username`
+* creating an admin user: 
+ 
+```
+uaac user add <user> -p <password> --emails <email>
+uaac member add cloud_controller.admin <user>
+uaac member add uaa.admin <user>
+uaac member add scim.read <user>
+uaac member add scim.write <user>
+```
+
+## Custom User Provided Services
+
+### Redis Labs
+* Create an account and free tier plan, get the host, port and password
+* Add a CUPS using JSON, e.g. `cf cups <service_name> -p '{"port":<port>,"host":<host>,"password":<password>}'`
+* Or interatively: `cf cups <service_name> -p "port, host, password"`
+* Bind the service to an app: `cf bind-service <service_name> <app_name>`
+* Restage the app: `cf restage <app_name>`
+
 ## Hints and tips
 
 * see the full HTTP trace of a command sent to CF by setting `CF_TRACE` to `true`.
