@@ -8,15 +8,16 @@ In brief:
 * run `bosh-lite/bin/provision_cf`
 
 ## Smoke tests and integration tests
+
 ### Running locally
-* once CF is deployed, clone the [acceptance tests](https://github.com/cloudfoundry/cf-acceptance-tests)
+* install go and set GOPATH
+* `go get -d github.com/cloudfoundry/cf-acceptance-tests`
+* more info: [CF Acceptance Tests](https://github.com/cloudfoundry/cf-acceptance-tests)
 * create an `integration_config.yml` per the instructions in the README (including skipping SSL validation as they are hitting your local machine)
-* run the tests from `bosh-lite/bin/test`
+* run the tests: `./bin/test`
 
-### Running remotely as errands
-* `bosh errands` will list the available jobs (including test suites)
-* `bosh run errand <name>` will run an errand on the VM
-
+### Run as BOSH errand
+* See BOSH lite quickstart.
 
 ## Deploying a sample app
 *Assuming a buildpack is present for your chosen language.*
@@ -44,10 +45,43 @@ cf target -o <orgName> -s <spaceName>
 
 * run `cf push`.
 
-
 ## Scaling an app
+
 * with the app deploying, run `cf scale <app_name> -i N`, where `N` is the number of instances you want.
 * `cf apps` 
+
+## Setting app environment variables
+
+* e.g. `cf set-env <app_name> SECRET hushhush`
+* `cf env <app_name>` to show all environment variables for an app
+* `cf unset-env ...` to remove
+
+## Blue-Green deployment
+
+* We have two releases in production called blue and green, in CF these are separate 'apps'.
+* Say the first release is blue on the live route: `cf push blue -n route`
+* The next release is green on a temporary route: `cf push green -n route-temp`
+* Then the green release can be tested on the temporary route
+* To switch over add live route to green: `cf map-route green 10.244.0.34.xip.io -n route`, which starts load balancing between blue and green
+* Remove the live route to blue: `cf unmap-route blue 10.244.0.34.xip.io -n route`, so all traffic is routed to green
+* Done! The next release will be to blue. Rinse & repeat.
+
+## Application logs
+
+### Loggregator buffer
+* Captures CF logging and STDOUT and STDERR from the app
+* Tail the loggregator buffer for an app: `cf logs <app_name>`
+* Dump the recent logs: `cf logs <app_name> --recent`
+
+### Using a remote logging service
+* Like Papertrail, Splunk etc.
+* Create a free Papertrail account and a system, use Heroku/Cloud Foundry, copy drain url
+* Create a user provided service: `cf cups papertrail -l <syslog_drain_url>`, ensure the url starts with `syslog://`
+* Bind the CUPS to an app: `cf bind-service <app_name> papertrail`
+* Push or restage the app to start drain: `cf restage <app_name>`
+
+### Inspect log files
+* `cf files <app_name> app/<path_to_log_file>` outputs the whole file(!)
 
 ## Hints and tips
 
