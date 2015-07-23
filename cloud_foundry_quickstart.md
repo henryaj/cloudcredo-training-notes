@@ -135,6 +135,12 @@ bin/wsh
 * from there, use `ps -ef` to show a list of running processes.
 * the app itself is located in `/app`.
 
+## Deploying non-web apps in the same repo
+* either create a separate manifest.yml for the worker app:
+    * create e.g. `manifest.worker.yml`, with a single worker app specified (with `no-route: true` and the appropriate `command` to launch it)
+    * deploy app(s) in the separate manifest with `cf push -f <path_to_manifest_file>`
+* or put all apps in the same manifest (and specify which to push with `cf push <app_name>`)
+
 ## Hints and tips
 
 * see the full HTTP trace of a command sent to CF by setting `CF_TRACE` to `true`.
