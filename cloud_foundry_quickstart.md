@@ -141,6 +141,27 @@ bin/wsh
     * deploy app(s) in the separate manifest with `cf push -f <path_to_manifest_file>`
 * or put all apps in the same manifest (and specify which to push with `cf push <app_name>`)
 
+## Viewing job spec files
+* jobs are tasks that can be run by BOSH. Errands are specific type of job that are run only once, or on demand.
+* jobs are found in the `jobs` directory of a release
+* each job has a `spec` file which lists its name, description, packages required, templates to be interpreted at runtime, and properties (and their optional defaults and descriptions)
+* properties can be set in:
+    * job spec (job-specific)
+    * manifest job block (job-specific)
+    * manifest properties block (global for all jobs)
+* properties set in the job spec override all others.
+* properties set in the job block are only accessible to that job, and override the global properties set in the properties block.
+
+## Customising CF release
+
+* Edit the config stubs in `cf-release/templates`, e.g. add a security group definition
+* Then make the manifest and deploy CF with BOSH.
+
+## Updating CF release
+
+* Run `cf-release/update` to pull and update all the submodules.
+* Deploy CF with BOSH.
+
 ## Hints and tips
 
 * see the full HTTP trace of a command sent to CF by setting `CF_TRACE` to `true`.
