@@ -112,6 +112,30 @@ uaac member add scim.write <user>
 * Bind the service to an app: `cf bind-service <service_name> <app_name>`
 * Restage the app: `cf restage <app_name>`
 
+## Security groups
+* these restrict *outbound* connections from apps
+* the default running security groups, `public_networks`, is extremely permissive, allowing full access to the public internet
+
+### Adding a security group to an app
+* create a new security group: `cf create-security-group <name> <path_to_config_json>`
+* apply this security group to your desired spaces: `cf bind-security-group <name> <org> <space>`
+* remove this default security group using `cf unbind-running-security-group public_networks`
+* after making changes to security groups, restart your apps using `cf restart <app_name>`
+
+## Accessing a container using SSH (when using BOSH Lite)
+* find the id of the Warden container you wish to access – there is one per app instance. To do this, run `bosh ssh` and select the DEA (which is labelled as 'runner') to access the CF instance. Run `htop`, then hit F5 to view as tree and sort by `TIME+` to find resource-intensive apps - this will show up the parent Warden container and its id.
+* then, to open a shell into the Warden container:
+
+```
+sudo su -
+cd /var/vcap/data/warden/depot/<container_id>
+bin/wsh
+```
+
+* from there, use `ps -ef` to show a list of running processes.
+* the app itself is located in `/app`.
+
 ## Hints and tips
 
 * see the full HTTP trace of a command sent to CF by setting `CF_TRACE` to `true`.
+
