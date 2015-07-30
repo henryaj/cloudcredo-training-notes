@@ -45,6 +45,11 @@ jobs:
 
 * now view the pipeline at 10.244.8.0.xip.io:8080. The task will be paused by default, and can be started from the web interface or on the command line (using `fly --target <name> configure sample-pipeline --paused=false`)
 
+## Running one-off test jobs
+* Use `fly execute` to run a task.
+* The task config must be in a separate YAML file, e.g. `fly --target <target_name> execute -c <task.yml>`.
+* Use the option `-p` to execute the task with root privileges.
+
 ## Keeping `fly` up-to-date
 * update `fly` to the correct version for your Concourse deployment:
 `fly --target <name> sync`
