@@ -113,6 +113,7 @@ uaac member add scim.write <user>
 * Restage the app: `cf restage <app_name>`
 
 ## Security groups
+
 * these restrict *outbound* connections from apps
 * the default running security groups, `public_networks`, is extremely permissive, allowing full access to the public internet
 
@@ -136,12 +137,14 @@ bin/wsh
 * the app itself is located in `/app`.
 
 ## Deploying non-web apps in the same repo
+
 * either create a separate manifest.yml for the worker app:
     * create e.g. `manifest.worker.yml`, with a single worker app specified (with `no-route: true` and the appropriate `command` to launch it)
     * deploy app(s) in the separate manifest with `cf push -f <path_to_manifest_file>`
 * or put all apps in the same manifest (and specify which to push with `cf push <app_name>`)
 
 ## Viewing job spec files
+
 * jobs are tasks that can be run by BOSH. Errands are specific type of job that are run only once, or on demand.
 * jobs are found in the `jobs` directory of a release
 * each job has a `spec` file which lists its name, description, packages required, templates to be interpreted at runtime, and properties (and their optional defaults and descriptions)
@@ -154,8 +157,23 @@ bin/wsh
 
 ## Customising CF release
 
+### Changing the manifest
 * Edit the config stubs in `cf-release/templates`, e.g. add a security group definition
 * Then make the manifest and deploy CF with BOSH.
+
+### Deploying code changes
+* fork the submodule repo containing the change (e.g. `cloud_controller_ng`) and the main Cloud Foundry repo
+* point `cf-release` to the new submodule repo by modifying the correct entry in `.gitmodules`
+* from the `cf-release` directory, run `git submodule sync` to update the remote of the submodule
+* go into the submodule directory, make your desired change to the submodule, commit and push
+* from the `cf-release` dir, commit the change to the submodule and push
+
+### Creating and deploying a release
+* run `bosh create release` to generate the new release - when prompted for a name, hit Enter to use the default ('cf'). By default, this creates a dev release
+* run `bosh upload release` to push the new release 
+* run `bosh deploy`
+
+If the new release is not the latest release by version number, retarget `bosh deploy` by editing `bosh-lite/manifests/cf-manifest.yml` and changing releases:version (which by default is set to 'latest') to the exact version to be deployed.
 
 ## Updating CF release
 
