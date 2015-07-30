@@ -1,7 +1,9 @@
 # Deploying Micro BOSH and CF to AWS
 
 ## Use `bosh aws` to provision infrastructure
-* follow step 'Prepare the Deployment Environment' to export the required environment variables, then run `bosh aws create` to provision the required infrastructure
+* follow step ['Prepare the Deployment Environment'](https://docs.cloudfoundry.org/deploying/ec2/bootstrap-aws-vpc.html#deployment-env-prep) to export the required environment variables
+* note that `BOSH_VPC_DOMAIN` and `BOSH_VPC_SUBDOMAIN` must be set, even when you do not have a domain, as these values are used to name the S3 buckets (which must be unique)
+* run `bosh aws create` to provision the required infrastructure
 
 ## Deploying Micro BOSH
 (Based on http://bosh.io/docs/deploy-microbosh-to-aws.html)
