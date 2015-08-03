@@ -180,6 +180,24 @@ If the new release is not the latest release by version number, retarget `bosh d
 * Run `cf-release/update` to pull and update all the submodules.
 * Deploy CF with BOSH.
 
+## Monitoring NATS message bus traffic
+
+### Find app GUID and NATS config
+* Retrieve NATS config from the CF manifest, or from the NATS vm
+    - `bosh ssh`
+    - Select the NATS vm
+    - `ps -ef | grep nats.conf`
+    - `more </path/to/nats.conf>`
+    - Note the username, password, host and port
+* Get the GUID of an app using `cf app <app_name> --guid`
+
+### Monitor traffic for a single app from local machine
+* Install the NATS Ruby client: `gem install nats`
+* Monitor all NATS traffic: `nats-sub <subject> -s <server>` 
+    - `">"` matches any non-blank subject
+    - BOSH Lite server is at `nats://nats:nats@10.244.0.6:4222` by default
+* Filter traffic by the app GUID: `./nats-all.rb | grep <guid>`
+
 ## Hints and tips
 
 * see the full HTTP trace of a command sent to CF by setting `CF_TRACE` to `true`.
