@@ -1,0 +1,407 @@
+BOSH CLI helps you manage your BOSH deployments and releases.
+
+Usage: bosh [<options>] <command> [<args>]
+    -c, --config FILE                Override configuration file. Also can be overridden by BOSH_CONFIG environment variable. Defaults to $HOME/.bosh_config. Override precedence is command-line option, then environment variable, then home directory.
+        --parallel MAX               Sets the max number of parallel downloads
+        --[no-]color                 Toggle colorized output
+    -v, --verbose                    Show additional output
+    -q, --quiet                      Suppress all output
+    -n, --non-interactive            Don't ask for user input
+    -N, --no-track                   Return Task ID and don't track
+    -P, --poll INTERVAL              Director task polling interval
+    -t, --target URL                 Override target
+    -u, --user USER                  Override username
+    -p, --password PASSWORD          Override password
+    -d, --deployment FILE            Override deployment
+    -h, --help                       here you go
+
+add blob <local_path> [<blob_dir>]
+    Add a local file as BOSH blob
+
+alias <name> <command>
+    Create an alias <name> for command <command>
+
+aliases
+    Show the list of available command aliases
+
+aws
+    show bosh aws sub-commands
+
+aws bootstrap bosh [<config_file>]
+    bootstrap full bosh deployment
+
+aws bootstrap micro
+    rm deployments dir, creates a deployments/micro/micro_bosh.yml and deploys the microbosh
+
+aws create [<config_file>] [--trace]
+    create everything in migrations
+    --trace         print all HTTP traffic
+
+aws create key_pairs [<config_file>]
+    creates only the key pairs
+
+aws create route53 records [<config_file>]
+    creates only the Route 53 records
+
+aws create s3 [<config_file>]
+    create only the s3 buckets
+
+aws create vpc [<config_file>]
+    creates only the VPC
+
+aws destroy [<config_file>]
+    destroy everything in an AWS account
+
+aws generate bat <vpc_receipt_file> <route53_receipt_file>
+<stemcell_version> <stemcell_name>
+    generate bat.yml
+
+aws generate bosh <vpc_receipt_file> <route53_receipt_file>
+<bosh_rds_receipt_file>
+    generate bosh.yml deployment manifest
+
+aws generate micro_bosh <vpc_receipt_file> <route53_receipt_file>
+    generate micro_bosh.yml
+
+backup [<path>] [--force]
+    Backup BOSH
+    --force         Overwrite if the backup file already exists
+
+blobs
+    Print current blobs status
+
+cancel task <task_id>
+    Cancel task once it reaches the next checkpoint
+
+cleanup [--all]
+    Cleanup releases and stemcells
+    --all       Remove all unused releases and stemcells
+
+cleanup ssh
+    Cleanup SSH artifacts
+
+cloud-config
+    Download the current cloud config for the director
+
+cloudcheck [<deployment_name>] [--auto] [--report]
+    Cloud consistency check and interactive repair
+    --auto            resolve problems automatically (not recommended for production)
+    --report          generate report only, don't attempt to resolve problems
+
+complete
+    Command completion options
+
+create release [<manifest_file>] [--force] [--final] [--with-tarball]
+[--dry-run] [--name NAME] [--version VERSION]
+    Create release (assumes current directory to be a release repository)
+    --force                             bypass git dirty state check
+    --final                             create final release
+    --with-tarball                      create release tarball
+    --dry-run                           stop before writing release manifest
+    --name NAME                         specify a custom release name
+    --version VERSION                   specify a custom version number (ex: 1.0.0 or 1.0-beta.2+dev.10)
+
+create user [<username>] [<password>]
+    Create user
+
+delete deployment <deployment_name> [--force]
+    Delete deployment
+    --force         ignore errors while deleting
+
+delete release <name> [<version>] [--force]
+    Delete release (or a particular release version)
+    --force         ignore errors during deletion
+
+delete snapshot <snapshot_cid>
+    Deletes a snapshot
+
+delete snapshots
+    Deletes all snapshots of a deployment
+
+delete stemcell <name> <version> [--force]
+    Delete stemcell
+    --force         ignore errors while deleting the stemcell
+
+delete user [<username>]
+    Deletes the user from the director
+
+deploy [--recreate] [--redact-diff]
+    Deploy according to the currently selected deployment manifest
+    --recreate                  recreate all VMs in deployment
+    --redact-diff               redact manifest value changes in deployment
+
+deployment [<filename>]
+    Get/set current deployment
+
+deployments
+    Show the list of available deployments
+
+diff <template>
+    Diffs your current BOSH deployment configuration against the specified BOSH deployment configuration template so
+    that you can keep your deployment configuration file up to date. A dev template can be found in deployments repos.
+
+download manifest <deployment_name> [<save_as>]
+    Download deployment manifest locally
+
+download public stemcell <stemcell_filename>
+    Downloads a stemcell from the public blobstore
+
+edit deployment
+    Edit current deployment manifest
+
+errands
+    List available errands
+
+export compiled_packages <release> <stemcell> <download_dir>
+    Download compiled packages for a specific release and stemcell combination
+
+export release <release> <stemcell>
+    Export the compiled release to a tarball. Release should be in the form of {name}/{version} and stemcell should be
+    in the form of {operating system name}/{stemcell version}
+
+finalize release <tarball_path> [--dry-run] [--name NAME] [--version
+VERSION]
+    Create final release from dev release tarball (assumes current directory to be a release repository)
+    --dry-run                           stop before writing release manifest
+    --name NAME                         specify a custom release name
+    --version VERSION                   specify a custom version number (ex: 1.0.0 or 1.0-beta.2+dev.10)
+
+generate job <name>
+    Generate job template
+
+generate package <name>
+    Generate package template
+
+get property <name>
+    Get deployment property
+
+help [--all]
+    Show help message
+    --all       Show help for all BOSH commands
+
+import compiled_packages <exported_tar_path>
+    Import compiled packages for a specific release and stemcell combination
+
+init release [<base>] [--git]
+    Initialize release directory
+    --git       initialize git repository
+
+locks
+    Show list of current locks
+
+login [<username>] [<password>]
+    Log in to currently targeted director. The username and password can also be set in the BOSH_USER and BOSH_PASSWORD
+    environment variables.
+
+logout
+    Forget saved credentials for targeted director
+
+logs <job> [<index>] [--agent] [--job] [--only filter1,filter2,...]
+[--dir destination_directory] [--all]
+    Fetch job or agent logs from a BOSH-managed VM
+    --agent                                                 fetch agent logs
+    --job                                                   fetch job logs
+    --only filter1,filter2,...                              only fetch logs that satisfy given filters (defined in job spec)
+    --dir destination_directory                             download directory
+    --all                                                   deprecated
+
+micro
+    show micro bosh sub-commands
+
+micro agent <args>
+    Send agent messages
+    
+    Message Types:
+    
+    start - Start all jobs on MicroBOSH
+    
+    stop - Stop all jobs on MicroBOSH
+    
+    ping - Check to see if the agent is responding
+    
+    drain TYPE SPEC - Tell the agent to begin draining
+      TYPE - One of 'shutdown', 'update' or 'status'.
+      SPEC - The drain spec to use.
+    
+    state [full] - Get the state of a system
+      full - Get additional information about system vitals
+    
+    list_disk - List disk CIDs mounted on the system
+    
+    migrate_disk OLD NEW - Migrate a disk
+      OLD - The CID of the source disk.
+      NEW - The CID of the destination disk.
+    
+    mount_disk CID - Mount a disk on the system
+      CID - The cloud ID of the disk to mount.
+    
+    unmount_disk CID - Unmount a disk from the system
+      CID - The cloud ID of the disk to unmount.
+
+micro apply <spec>
+    Apply spec
+
+micro delete
+    Delete micro BOSH instance (including persistent disk)
+
+micro deploy [<stemcell>] [--update] [--update-if-exists]
+    Deploy a micro BOSH instance to the currently selected deployment
+    --update                              update existing instance
+    --update-if-exists                    create new or update existing instance
+
+micro deployment [<name>]
+    Choose micro deployment to work with, or display current deployment
+
+micro deployments
+    Show the list of deployments
+
+micro status
+    Display micro BOSH deployment status
+
+properties [--terse]
+    List deployment properties
+    --terse         easy to parse output
+
+public stemcells [--full] [--all]
+    Show the list of publicly available stemcells for download.
+    --full        show the full download url
+    --all         show all stemcells
+
+recreate <job> [<index>] [--force]
+    Recreate job/instance (hard stop + start)
+    --force         Proceed even when there are other manifest changes
+
+releases [--jobs]
+    Show the list of available releases
+    --jobs        include job templates
+
+rename job <old_name> <new_name> [--force]
+    Renames a job. NOTE, your deployment manifest must also be updated to reflect the new job name.
+    --force         Ignore errors
+
+reset release
+    Reset dev release
+
+restart <job> [<index>] [--force]
+    Restart job/instance (soft stop + start)
+    --force         Proceed even when there are other manifest changes
+
+run errand [<errand_name>] [--download-logs] [--logs-dir
+destination_directory] [--keep-alive]
+    Run specified errand
+    --download-logs                                                   download logs
+    --logs-dir destination_directory                                  logs download directory
+    --keep-alive                                                      prevent deletion/creation of vm after running errand
+
+scp [--download] [--upload] [--public_key FILE] [--gateway_host HOST]
+[--gateway_user USER] [--gateway_identity_file FILE]
+    upload/download the source file to the given job. Note: for download /path/to/destination is a directory
+    --download                                                Download file
+    --upload                                                  Upload file
+    --public_key FILE                                         Public key
+    --gateway_host HOST                                       Gateway host
+    --gateway_user USER                                       Gateway user
+    --gateway_identity_file FILE                              Gateway identity file
+
+set property <name> <value>
+    Set deployment property
+
+snapshots [<job>] [<index>]
+    List all snapshots
+
+ssh [--public_key FILE] [--gateway_host HOST] [--gateway_user USER]
+[--gateway_identity_file FILE] [--default_password PASSWORD]
+    Execute command or start an interactive session
+    --public_key FILE                                         Public key
+    --gateway_host HOST                                       Gateway host
+    --gateway_user USER                                       Gateway user
+    --gateway_identity_file FILE                              Gateway identity file
+    --default_password PASSWORD                               Use default ssh password (NOT RECOMMENDED)
+
+start <job> [<index>] [--force]
+    Start job/instance
+    --force         Proceed even when there are other manifest changes
+
+status [--uuid]
+    Show current status (current target, user, deployment info etc)
+    --uuid        Only print director UUID
+
+stemcells
+    Show the list of available stemcells
+
+stop <job> [<index>] [--soft] [--hard] [--force]
+    Stop job/instance
+    --soft          Stop process only
+    --hard          Power off VM
+    --force         Proceed even when there are other manifest changes
+
+sync blobs
+    Sync blob with the blobstore
+
+take snapshot [<job>] [<index>]
+    Takes a snapshot
+
+target [<director_url>] [<name>] [--ca-cert FILE]
+    Choose director to talk to (optionally creating an alias). If no arguments given, show currently targeted director
+    --ca-cert FILE                Path to client certificate provided to UAA server
+
+targets
+    Show the list of available targets
+
+task [<task_id>] [--event] [--cpi] [--debug] [--result] [--raw]
+[--no-filter]
+    Show task status and start tracking its output
+    --event                 Track event log
+    --cpi                   Track CPI log
+    --debug                 Track debug log
+    --result                Track result log
+    --raw                   Show raw log
+    --no-filter             Include all task types (ssh, logs, vms, etc)
+
+tasks [--no-filter]
+    Show running tasks
+    --no-filter             Include all task types (ssh, logs, vms, etc)
+
+tasks recent [<count>] [--no-filter]
+    Show <number> recent tasks
+    --no-filter             Include all task types (ssh, logs, vms, etc)
+
+unset property <name>
+    Unset deployment property
+
+update cloud-config <cloud_config_path>
+    Update the current cloud config for the director
+
+upload blobs
+    Upload new and updated blobs to the blobstore
+
+upload release [<release_file>] [--rebase] [--skip-if-exists]
+    Upload release (release_file can be a local file or a remote URI)
+    --rebase                          Rebases this release onto the latest version known by director (discards local job/package versions
+                     in favor of versions assigned by director)
+    --skip-if-exists                  skips upload if release already exists
+
+upload stemcell <stemcell_location> [--skip-if-exists]
+    Upload stemcell (stemcell_location can be a local file or a remote URI)
+    --skip-if-exists                  skips upload if stemcell already exists
+
+validate jobs
+    Validates all jobs in the current release using current deployment manifest as the source of properties
+
+verify release <tarball_path>
+    Verify release
+
+verify stemcell <tarball_path>
+    Verify stemcell
+
+version
+    Show version
+
+vm resurrection [<job>] [<index>] <new_state>
+    Enable/Disable resurrection for a given vm
+
+vms [<deployment_name>] [--details] [--dns] [--vitals]
+    List all VMs in a deployment
+    --details           Return detailed VM information
+    --dns               Return VM DNS A records
+    --vitals            Return VM vitals information
